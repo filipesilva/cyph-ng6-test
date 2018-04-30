@@ -1,0 +1,263 @@
+@import './theme';
+
+html, body {
+	background-color: $cyph-background;
+}
+
+#pre-load {
+	background-color: inherit !important;
+	position: fixed;
+	top: -1px;
+	left: -1px;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
+	z-index: 999;
+
+	> .loading, > .transition {
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+
+	> .loading > .logo-animation {
+		margin-top: calc(33vh - 20px);
+	}
+
+	.double-bounce1, .double-bounce2 {
+		height: 60px;
+		width: 60px;
+		position: absolute;
+		top: calc(50% - 30px);
+		left: calc(50% - 30px);
+	}
+
+	> .transition {
+		opacity: 0;
+
+		@include animation(preloadfadeout 2s linear);
+
+		+ .loading > .logo-animation * {
+			@include animation-delay(2s);
+		}
+	}
+}
+
+.loading {
+	font-size: 1.43rem;
+
+	cyph-app & {
+		padding: 10px;
+	}
+
+	> .image, > .logo-animation {
+		height: 33vh;
+		width: 33vh;
+		min-height: 33vh;
+		min-width: 33vh;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 20px;
+		position: relative;
+
+		> * {
+			display: block;
+		}
+	}
+
+	> .image > img {
+		height: 100%;
+	}
+
+	> .logo-animation {
+		@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
+
+		> * {
+			background-color: transparent;
+			background-repeat: no-repeat;
+			background-size: 33vh 33vh;
+			background-image: url(/assets/img/logo.white.icon.png);
+			opacity: 0;
+		}
+
+		&.connected, > * {
+			@include animation-iteration-count(infinite !important);
+		}
+
+		&.connected {
+			@include animation(logoconnected 3250ms step-end);
+
+			> * {
+				opacity: 1;
+
+				@include animation(none !important);
+			}
+		}
+
+		> * {
+			position: absolute;
+		}
+
+		> :nth-child(1) {
+			height: 40%;
+			width: 60%;
+			top: 60%;
+			left: 40%;
+			background-position: 100% 100%;
+
+			@include animation(logo0 1890ms step-end);
+		}
+
+		> :nth-child(2) {
+			height: 40%;
+			width: 40%;
+			top: 60%;
+			left: 0%;
+			background-position: 0% 100%;
+
+			@include animation(logo1 1890ms step-end);
+		}
+
+		> :nth-child(3) {
+			height: 25%;
+			width: 35%;
+			top: 35%;
+			left: 65%;
+			background-position: 100% 47%;
+
+			@include animation(logo2 1890ms step-end);
+		}
+
+		> :nth-child(4) {
+			height: 25%;
+			width: 65%;
+			top: 35%;
+			left: 0%;
+			background-position: 0% 47%;
+
+			@include animation(logo3 1890ms step-end);
+		}
+
+		> :nth-child(5) {
+			height: 35%;
+			width: 100%;
+			top: 0%;
+			left: 0%;
+			background-position: 0% 0%;
+
+			@include animation(logo4 1890ms step-end);
+		}
+	}
+
+	> :not(.image):not(.logo-animation) {
+		letter-spacing: 1px;
+		text-align: center;
+		font-family: Ubuntu, 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+	}
+}
+
+@include keyframes(logoconnected) {
+	0%, 38.4%, 53.8%, 69.2%, 100% {
+		opacity: 1;
+	}
+
+	30.8%, 46.2%, 61.5% {
+		opacity: 0;
+	}
+}
+
+
+@include keyframes(logo0) {
+	0%, 100% {
+		opacity: 0;
+	}
+
+	26.4% {
+		opacity: 1;
+	}
+}
+
+
+@include keyframes(logo1) {
+	0%, 95.8%, 100% {
+		opacity: 0;
+	}
+
+	30.7% {
+		opacity: 1;
+	}
+}
+
+
+@include keyframes(logo2) {
+	0%, 91.5%, 100% {
+		opacity: 0;
+	}
+
+	34.9% {
+		opacity: 1;
+	}
+}
+
+
+@include keyframes(logo3) {
+	0%, 87.3%, 100% {
+		opacity: 0;
+	}
+
+	39.2% {
+		opacity: 1;
+	}
+}
+
+
+@include keyframes(logo4) {
+	0%, 83.1%, 100% {
+		opacity: 0;
+	}
+
+	43.4% {
+		opacity: 1;
+	}
+}
+
+
+@include keyframes(preloadfadeout) {
+	0%, 25% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.8;
+	}
+
+	100% {
+		opacity: 0;
+	}
+}
+
+
+/*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
+
+.double-bounce1, .double-bounce2 {
+	border-radius: 50%;
+	background-color: white;
+	opacity: 0.6;
+
+	@include animation(preloadbounce 2s infinite ease-in-out);
+}
+
+.double-bounce2 {
+	@include animation-delay(-1s);
+}
+
+@include keyframes(preloadbounce) {
+	0%, 100% {
+		@include transform(scale(0));
+	}
+
+	50% {
+		@include transform(scale(1));
+	}
+}
