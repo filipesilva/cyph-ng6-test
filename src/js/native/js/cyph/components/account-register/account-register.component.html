@@ -1,0 +1,683 @@
+<div
+	class='login-form'
+	[class.checking]='checking'
+>
+	<mat-card fxFlex class='fullscreen'>
+		<cyph-logo cardHeader></cyph-logo>
+		<mat-card-title>
+			{{stringsService.registerTitle}}
+		</mat-card-title>
+		<mat-card-content>
+			<div fxLayout='column' fxLayoutGap='32px'>
+				<div fxLayout='row'>
+					<form
+						fxFlex
+						fxLayout='column'
+						fxLayoutGap='32px'
+						autocomplete='off'
+						ngNativeValidate
+						(submit)='submit()'
+					>
+						<mat-tab-group
+							[(selectedIndex)]='tabIndex'
+							(selectedIndexChange)='updateRoute(0, $event)'
+						>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon>radio_button_checked</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Welcome</span>
+								</ng-template>
+
+								<div
+									fxFlex
+									*ngIf='!envService.isTelehealth'
+									fxLayout='column'
+									fxLayoutGap='48px'
+								>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										<ng-container *ngIf='
+											envService.coBranded && !envService.whiteLabel;
+											else mainBasicWelcomeMessage
+										'>
+											<span cyphTranslate>Welcome to</span>
+											&nbsp;
+											<span>{{stringsService.product}}</span>
+											&nbsp;
+											<span cyphTranslate>powered by Cyph!</span>
+										</ng-container>
+										<ng-template #mainBasicWelcomeMessage>
+											<span cyphTranslate>
+												Congratulations on securing your
+											</span>
+											&nbsp;
+											<span>{{stringsService.product}}</span>
+											&nbsp;
+											<span cyphTranslate>account invite!</span>
+										</ng-template>
+									</div>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										cyphTranslate
+										*ngIf='!envService.isTelehealth'
+									>
+										You'll be getting early access to premium features, and
+										will still be able to easily communicate with anyone who
+										doesn't have an account yet.
+									</div>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										cyphTranslate
+										*ngIf='envService.isTelehealth'
+									>
+										Registering an account with us enables you to easily and
+										safely share medical records with your doctors, schedule
+										telehealth appointments, and more.
+									</div>
+								</div>
+
+								<div
+									fxFlex
+									*ngIf='envService.isTelehealth'
+									fxLayout='column'
+									fxLayoutGap='48px'
+								></div>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 0'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 0'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Basic Information</span>
+								</ng-template>
+
+								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										<span cyphTranslate>Who are you? Associate your</span>
+										&nbsp;
+										<span>{{stringsService.product}}</span>
+										&nbsp;
+										<span cyphTranslate *ngIf='!envService.isTelehealth'>
+											account with your identity or an alias.
+										</span>
+										<span cyphTranslate *ngIf='envService.isTelehealth'>
+											account with your identity.
+										</span>
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[formControl]='username'
+														[textMask]='usernameMask'
+														name='cyphUsername'
+														placeholder='Username'
+														required
+														data-lpignore='true'
+													/>
+													<div
+														matSuffix
+														cyphTranslate
+														class='username-pending'
+														matTooltip='Checking availability...'
+														*ngIf='username.pending'
+													>
+														<mat-progress-spinner
+															diameter='24'
+															strokeWidth='2'
+															mode='indeterminate'
+														></mat-progress-spinner>
+													</div>
+													<mat-icon
+														matSuffix
+														cyphTranslate
+														matTooltip='Username unavailable'
+														*ngIf='
+															!username.pending &&
+															!!username.value &&
+															!!username.errors
+														'
+													>
+														error_outline
+													</mat-icon>
+													<mat-icon
+														matSuffix
+														cyphTranslate
+														matTooltip='Username available!'
+														*ngIf='
+															!username.pending &&
+															!!username.value &&
+															!username.errors
+														'
+													>
+														check
+													</mat-icon>
+													<mat-error
+														cyphTranslate
+														*ngIf='username.hasError("usernameTaken")'
+													>
+														Username unavailable
+													</mat-error>
+												</mat-form-field>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='name'
+														name='name'
+														[placeholder]='envService.isTelehealth ?
+															stringsService.name :
+															stringsService.nameOrPseudonym
+														'
+														required
+														data-lpignore='true'
+													/>
+												</mat-form-field>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='email'
+														name='email'
+														type='email'
+														[placeholder]='envService.isTelehealth ?
+															stringsService.email :
+															stringsService.emailOptional
+														'
+														[required]='envService.isTelehealth'
+														data-lpignore='true'
+													/>
+												</mat-form-field>
+											</div>
+											<div
+												fxLayout='row'
+												fxLayoutAlign='center center'
+												*ngIf='!envService.isTelehealth'
+											>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='inviteCode'
+														name='inviteCode'
+														type='inviteCode'
+														placeholder='Invite Code'
+														required
+														data-lpignore='true'
+													/>
+												</mat-form-field>
+											</div>
+										</div>
+									</div>
+								</div>
+							</mat-tab>
+							<mat-tab *ngIf='false'>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 1'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 1'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Patient Info & Insurance</span>
+								</ng-template>
+								<div
+									fxLayout='row'
+									fxLayoutAlign='center center'
+									class='description'
+								>
+									TODO: Add new patient forms & insurance
+									TODO: Reimplement tabIndex to work with variable sections
+								</div>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 1'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 1'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Master Key</span>
+								</ng-template>
+
+								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										<span cyphTranslate>This is your</span>
+										&nbsp;
+										<span>{{stringsService.product}}</span>
+										&nbsp;
+										<span cyphTranslate>
+											master key. It's like a normal password, but must also
+											be mathematically strong enough to encrypt your data.
+										</span>
+									</div>
+
+									<div fxLayout='row' fxLayoutAlign='center center' cyphTranslate>
+										We've automatically generated a secure master key for you.
+										You may pick your own instead, but to ensure your privacy
+										it must be at least 20 characters and very difficult to
+										guess.
+									</div>
+
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<div
+											fxLayout='column'
+											fxLayoutGap='16px'
+											class='cyph-banner warn'
+										>
+											<div
+												fxLayout='row'
+												fxLayoutAlign='center center'
+											>
+												<span cyphTranslate>
+													<strong>WARNING:</strong>
+													&ngsp;
+													<span>
+														If you lose this key, you will not
+														be able to recover your data,
+														initialize new devices, or access
+														your account in any way.
+													</span>
+													&ngsp;
+													<span>Keep it somewhere safe and</span>
+													&ngsp;
+													<i>offline</i>.
+													&ngsp;
+													<span>
+														For example, write it down on paper
+														and hide it or lock it in a vault.
+													</span>
+												</span>
+											</div>
+											<div
+												fxLayout='row'
+												fxLayoutAlign='center center'
+											>
+												<span cyphTranslate>
+													<span>And</span>
+													&ngsp;
+													<strong>DO NOT</strong>
+													&ngsp;
+													<span>
+														reuse this as a password for any
+														other service, or store it in a
+														third-party encrypted password
+														management service.
+													</span>
+												</span>
+											</div>
+										</div>
+									</div>
+
+									<div
+										fxLayout='row'
+										(click)='useXkcdPassphrase = true'
+										class='password-option'
+										[class.deselected]='!useXkcdPassphrase'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3 cyphTranslate>
+													Option #1: Securely Generated Master Key
+												</h3>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<div
+													class='spoiler'
+													[class.revealed]='!spoiler'
+													(click)='spoiler = !spoiler'
+												>
+													<div class='xkcd-passphrase animated fadeIn'>
+														<span
+															*ngIf='spoiler'
+															class='animated fadeIn'
+														>
+															Click to Reveal
+														</span>
+														<span
+															*ngIf='!spoiler'
+															class='animated fadeIn'
+														>
+															{{xkcdPassphrase | async}}
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div
+										fxLayout='row'
+										cyphTranslate
+										(click)='useXkcdPassphrase = false'
+										class='password-option'
+										[class.deselected]='useXkcdPassphrase'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3 cyphTranslate>
+													Option #2: Custom Master Key
+												</h3>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='masterKey'
+														name='masterKey'
+														[type]='hidePassword.masterKey ?
+															"password" :
+															"text"
+														'
+														placeholder='Master Key'
+														[required]='!useXkcdPassphrase'
+														[pattern]='".{" + masterKeyLength + ",}"'
+														data-lpignore='true'
+													/>
+													<mat-icon
+														matSuffix
+														class='suffix-button'
+														(click)='
+															hidePassword.masterKey =
+																!hidePassword.masterKey
+														'
+													>
+														{{
+															hidePassword.masterKey ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
+												</mat-form-field>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='masterKeyConfirm'
+														name='masterKeyConfirm'
+														[type]='hidePassword.masterKeyConfirm ?
+															"password" :
+															"text"
+														'
+														placeholder='Confirm Master Key'
+														[required]='!useXkcdPassphrase'
+														[pattern]='masterKey'
+														data-lpignore='true'
+													/>
+													<mat-icon
+														matSuffix
+														class='suffix-button'
+														(click)='
+															hidePassword.masterKeyConfirm =
+																!hidePassword.masterKeyConfirm
+														'
+													>
+														{{
+															hidePassword.masterKeyConfirm ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
+												</mat-form-field>
+											</div>
+										</div>
+									</div>
+								</div>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 2'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 2'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>PIN</span>
+								</ng-template>
+
+								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										This is a simple passcode used to lock your
+										account when you're away.
+									</div>
+
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<span cyphTranslate>
+											A four-digit number is fine in most cases. However,
+											you may choose to use a longer custom password, which
+											well be more secure if you plan to sign in to
+										</span>
+										&ngsp;
+										<span>{{stringsService.product}}</span>
+										&ngsp;
+										<span cyphTranslate>on a shared device.</span>
+									</div>
+
+									<div
+										fxLayout='row'
+										(click)='useLockScreenPIN = true'
+										class='password-option'
+										[class.deselected]='!useLockScreenPIN'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3 cyphTranslate>
+													Option #1: Four-Digit Number
+												</h3>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<cyph-pin-input
+													fxFlex
+													[(ngModel)]='lockScreenPIN'
+													name='lockScreenPIN'
+													[required]='useLockScreenPIN'
+												></cyph-pin-input>
+											</div>
+										</div>
+									</div>
+
+									<div
+										fxLayout='row'
+										cyphTranslate
+										(click)='useLockScreenPIN = false'
+										class='password-option'
+										[class.deselected]='useLockScreenPIN'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3 cyphTranslate>
+													Option #2: Custom Password
+												</h3>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='lockScreenPassword'
+														name='lockScreenPassword'
+														[type]='hidePassword.lockScreen ?
+															"password" :
+															"text"
+														'
+														placeholder='Lock Screen Password'
+														[required]='!useLockScreenPIN'
+														[pattern]='".{" + lockScreenPasswordLength + ",}"'
+														data-lpignore='true'
+													/>
+													<mat-icon
+														matSuffix
+														class='suffix-button'
+														(click)='
+															hidePassword.lockScreen =
+																!hidePassword.lockScreen
+														'
+													>
+														{{
+															hidePassword.lockScreen ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
+												</mat-form-field>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='lockScreenPasswordConfirm'
+														name='lockScreenPasswordConfirm'
+														[type]='hidePassword.lockScreenConfirm ?
+															"password" :
+															"text"
+														'
+														placeholder='Confirm Lock Screen Password'
+														[required]='!useLockScreenPIN'
+														[pattern]='lockScreenPassword'
+														data-lpignore='true'
+													/>
+													<mat-icon
+														matSuffix
+														class='suffix-button'
+														(click)='
+															hidePassword.lockScreenConfirm =
+																!hidePassword.lockScreenConfirm
+														'
+													>
+														{{
+															hidePassword.lockScreenConfirm ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
+												</mat-form-field>
+											</div>
+										</div>
+									</div>
+								</div>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 3'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 3'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Confirm</span>
+								</ng-template>
+
+								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+										cyphTranslate
+									>
+										Does this all look right?
+									</div>
+
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3 class='cyph-banner warn' *ngIf='error'>
+													{{
+														accountAuthService.errorMessage ||
+														stringsService.signupFailed
+													}}
+												</h3>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<strong cyphTranslate>Username:</strong>
+												&nbsp;
+												<span>{{username.value}}</span>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<strong cyphTranslate>Name:</strong>
+												&nbsp;
+												<span>{{name}}</span>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<strong cyphTranslate>Email:</strong>
+												&nbsp;
+												<span>{{email || stringsService.omitted}}</span>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<strong cyphTranslate>
+													Lock Screen PIN/Password:
+												</strong>
+												&nbsp;
+												<span *ngIf='useLockScreenPIN'>
+													{{lockScreenPIN}}
+												</span>
+												<span *ngIf='!useLockScreenPIN'>****</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</mat-tab>
+						</mat-tab-group>
+
+						<div
+							fxLayout='row'
+							fxLayoutAlign='center center'
+							*ngIf='tabIndex === totalSteps'
+						>
+							<button mat-button type='submit' [disabled]='!readyToSubmit'>
+								<span cyphTranslate>Register</span>
+							</button>
+						</div>
+					</form>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='tabIndex !== totalSteps'>
+					<button mat-button (click)='updateRoute(1)'>
+						<span cyphTranslate>Next</span>
+					</button>
+				</div>
+			</div>
+		</mat-card-content>
+		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+	</mat-card>
+</div>

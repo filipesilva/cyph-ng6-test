@@ -1,0 +1,5 @@
+@import '../../../../css/mixins';
+
+.note mat-card-subtitle {
+	@include word-wrap;
+}

@@ -1,0 +1,18 @@
+service: cyph-ws
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Strict-Transport-Security
+
+- url: /(.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  # default_headers Strict-Transport-Security

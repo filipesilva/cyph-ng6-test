@@ -1,0 +1,111 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayout.xs='column'
+	[class.mobile]='envService.isMobile'
+	[class.transition]='accountService.transition | async'
+>
+	<div *ngIf='accountService.interstitial' class='interstitial animated fadeIn'>
+		<div class='loading'>
+			<div class='logo-animation'>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<canvas [fxShow]='envService.showGranim' class='cyph-gradient animated fadeIn'></canvas>
+
+	<cyph-account-menu
+		fxLayout='column'
+		fxHide.lt-md
+		class='sidebar animated slideInLeft _0'
+		[style.max-width]='accountService.menuMaxWidth | async'
+		*ngIf='menuVisible'
+	></cyph-account-menu>
+
+	<cyph-account-menu
+		fxLayout='column'
+		fxFlexFill
+		fxShow.lt-md
+		class='sidebar mobile animated _0'
+		[@slideInOutRight]='accountService.mobileMenuOpen | async'
+		*ngIf='accountService.mobileMenuOpen | async'
+	></cyph-account-menu>
+
+	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
+		<div fxFlexFill fxLayout='column' class='router-content'>
+			<div
+				fxLayout='row'
+				class='header animated slideInDown'
+				[class.fadeOutUp]='accountService.transition | async'
+				fxLayoutAlign='center center'
+				fxLayoutGap='24px'
+				*ngIf='(accountService.header | async) !== undefined'
+			>
+				<span></span>
+				<button
+					mat-icon-button
+					cyphTranslate
+					class='home'
+					matTooltip='Home'
+					matTooltipPosition='right'
+					[routerLink]='accountService.routeRoot'
+					fxHide.gt-sm
+				>
+					<cyph-logo icon></cyph-logo>
+				</button>
+				<h1 fxFlex>{{(accountService.header | async) || ''}}</h1>
+				<button
+					mat-icon-button
+					matTooltip='Menu'
+					matTooltipPosition='left'
+					fxLayoutAlign='center center'
+					(click)='accountService.toggleMobileMenu()'
+					fxHide.gt-sm
+				>
+					<mat-icon>menu</mat-icon>
+				</button>
+				<span></span>
+			</div>
+			<div
+				class='animated'
+				[class.fadeOutUp]='accountService.transition | async'
+				fxFlex
+				[style.height]='fill ? "100%" : undefined'
+				[ngStyle]='
+					(
+						(accountService.header | async) !== undefined &&
+						!envService.isMobile
+					) ?
+						{padding: "0px 5vw"} :
+						{}
+				'
+				[ngStyle.gt-sm]='
+					(accountService.header | async) !== undefined ? {padding: "0px 16.5vw"} : {}
+				'
+				[ngStyle.gt-md]='
+					(accountService.header | async) !== undefined ? {padding: "0px 25vw"} : {}
+				'
+			>
+				<router-outlet></router-outlet>
+			</div>
+		</div>
+	</div>
+
+	<div
+		fxFlex='25'
+		fxHide.xs
+		fxLayout='column'
+		class='sidebar contacts'
+		*ngIf='sidebarVisible'
+	>
+		<div fxFlexFill fxLayout='row'>
+			<div fxFlex='4'></div>
+			<cyph-account-contacts fxFlex></cyph-account-contacts>
+			<div fxFlex='4'></div>
+		</div>
+	</div>
+</div>

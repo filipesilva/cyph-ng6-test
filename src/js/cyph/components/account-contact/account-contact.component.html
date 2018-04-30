@@ -1,0 +1,81 @@
+<mat-card
+	class='contact animated'
+	[class.non-clickable]='!clickable'
+	[class.telehealth]='envService.isTelehealth'
+	[routerLink]='!clickable ? undefined : (
+		accountService.routeRoot +
+		(envService.isTelehealth ? "profile" : "messages") + "/" +
+		(username || "")
+	)'
+	fxFlex
+	*ngIf='!!username'
+>
+	<mat-card-header
+		fxLayout='row'
+		fxLayoutAlign='stretch center'
+		*ngIf='(user | async)?.ready; else loading'
+	>
+		<img
+			mat-card-avatar
+			cyphTranslate
+			class='avatar'
+			[ngClass]='userPresence[((user | async)?.status | async) || 0]'
+			[src]='(user | async)?.avatar | async'
+			alt='User Avatar'
+			[matTooltip]='clickable ? stringsService.openProfile : ""'
+			[routerLink]='!clickable ?
+				undefined :
+				accountService.routeRoot + "profile/" + (username || "")
+			'
+		/>
+		<div fxLayout='column' fxLayoutAlign='center start'>
+			<mat-card-title>
+				{{
+					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor ?
+						stringsService.dr :
+						''
+				}}
+				{{(user | async)?.name | async}}
+			</mat-card-title>
+			<mat-card-subtitle fxHide.lt-md>
+				<ng-container *ngIf='
+					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
+					else standardView
+				'>
+					<ng-container *ngIf='getUserOrg(username) | async as org'>
+						<mat-icon>business</mat-icon>
+						&ngsp;
+						<span>{{(org?.name | async)}}</span>
+					</ng-container>
+				</ng-container>
+
+				<ng-template #standardView>
+					@{{((user | async)?.realUsername | async)}}
+				</ng-template>
+			</mat-card-subtitle>
+		</div>
+		<cyph-account-user-rating
+			[user]='user | async'
+			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
+			fxHide.lt-md
+		></cyph-account-user-rating>
+	</mat-card-header>
+
+	<ng-template #loading>
+		<mat-card-header class='pending' fxLayout='row'>
+			<button
+				mat-card-avatar
+				mat-icon-button
+				cyphTranslate
+				matTooltip='Open Profile'
+				[routerLink]='!clickable ?
+					undefined :
+					accountService.routeRoot + "profile/" + (username || "")
+				'
+			>
+				<mat-icon>person</mat-icon>
+			</button>
+			<mat-card-title>@{{username}}</mat-card-title>
+		</mat-card-header>
+	</ng-template>
+</mat-card>

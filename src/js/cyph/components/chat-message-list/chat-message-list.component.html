@@ -1,0 +1,116 @@
+<!--
+<div cyphNanoScroller>
+	<od-virtualscroll
+		fxFlexFill
+		[vsData]='vsData'
+		[vsEqualsFunc]='vsEqualsFunc'
+		[vsOptions]='vsOptions'
+		class='message-list-background'
+	>
+		<ng-template let-item>
+			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
+		</ng-template>
+	</od-virtualscroll>
+</div>
+-->
+
+<div cyphNanoScroller [class.visibility-hidden]='initialScrollDown | async'>
+	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
+		<ng-container *ngFor='let item of vsData | async; trackBy: trackByVsItem'>
+			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
+		</ng-container>
+	</div>
+</div>
+
+<div
+	class='background-image'
+	[style.background-image]='customBackgroundImage | async'
+></div>
+
+<ng-template #listItem let-item='item'>
+	<div fxLayout='row'>
+		<div fxFlex fxLayout='column'>
+			<div fxLayout='row' *ngIf='!item.mobile && item.isStart'>
+				<div fxLayout='column' fxLayoutGap='15px'>
+					<div></div>
+					<div></div>
+				</div>
+			</div>
+
+			<cyph-chat-message
+				fxLayout='row'
+				[accounts]='item.accounts'
+				[message]='item.message'
+				[mobile]='item.mobile'
+				[pending]='item.pending'
+				[scrollIntoView]='item.isEnd && (initialScrollDown | async)'
+				[uiStyle]='item.uiStyle'
+				[unconfirmedMessages]='item.unconfirmedMessages | async'
+				(scrolledIntoView)='initialScrollDown.next(false)'
+				*ngIf='item.message !== undefined'
+			></cyph-chat-message>
+
+			<div fxLayout='row' *ngIf='item.isEnd'>
+				<div fxFlex fxLayout='column' fxLayoutGap='4px'>
+					<div></div>
+
+					<div fxLayout='row' class='friend-is-typing'>
+						<div
+							[matTooltip]='stringsService.friendIsTyping'
+							cyphTranslate
+							class='ellipsis-spinner'
+							*ngIf='!item.accounts && (item.isFriendTyping | async)'
+							[@fadeInOut]='"in"'
+						>
+							<div class='bounce1'></div>
+							&ngsp;
+							<div class='bounce2'></div>
+							&ngsp;
+							<div class='bounce3'></div>
+						</div>
+					</div>
+
+					<div
+						fxLayoutAlign='center center'
+						*ngIf='!!promptFollowup && !!accountService; else chatEndMessage'
+					>
+						<button
+							fxLayout
+							mat-raised-button
+							class='follow-up'
+							color='accent'
+							cyphTranslate
+							[routerLink]='
+								accountService?.routeRoot +
+								"request-followup/" +
+								(promptFollowup || "")
+							'
+						>
+							Click to Schedule Follow-up Appointment
+						</button>
+					</div>
+					<ng-template #chatEndMessage>
+						<div
+							fxLayout='row'
+							class='chat-end-message'
+							[class.chat-disconnect-message]='!item.persistentEndMessage'
+							[class.cyph-light-theme]='item.persistentEndMessage'
+							*ngIf='item.persistentEndMessage || item.showDisconnectMessage'
+						>
+							<div fxFlexFill fxLayoutAlign='center center'>
+								<mat-card
+									[fxFlex]='item.persistentEndMessage ? 95 : 90'
+									[fxFlex.gt-sm]='item.persistentEndMessage ? 75 : 50'
+								>
+									<mat-card-content>
+										<ng-content></ng-content>
+									</mat-card-content>
+								</mat-card>
+							</div>
+						</div>
+					</ng-template>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-template>

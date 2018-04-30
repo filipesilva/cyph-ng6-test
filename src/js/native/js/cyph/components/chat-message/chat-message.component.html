@@ -1,0 +1,172 @@
+<div
+	[fxFlex]='mobile && uiStyle === uiStyles.default ? "nogrow" : ""'
+	class='message-item'
+	[ngClass]='"ui-style-" + uiStyles[uiStyle]'
+	[class.mobile]='mobile'
+	[class.author-app]='message?.authorType === authorTypes.App'
+	[class.author-local]='message?.authorType === authorTypes.Local'
+	[class.author-remote]='message?.authorType === authorTypes.Remote'
+	[class.self-destruct]='chatService.chatSelfDestruct'
+	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
+	[class.visibility-hidden]='(viewReady | async) === false'
+	[id]='message ? "message-id-" + message?.id : undefined'
+	*ngIf='message?.valueWatcher | async; let value'
+>
+	<div>
+		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else emailUI'>
+			<div class='message'>
+				<strong
+					class='message-author'
+					*ngIf='!mobile && message?.authorType !== authorTypes.App'
+				>
+					{{message?.author | async}}:
+				</strong>
+				&ngsp;
+				<ng-container
+					*ngTemplateOutlet='messageContent; context: {value: value}'
+				></ng-container>
+			</div>
+			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
+				<div fxLayout='row'>
+					<div *ngIf='mobile && message?.authorType === authorTypes.Local'>
+						{{message?.author | async}} &nbsp;&mdash;&nbsp;
+					</div>
+
+					<div>{{message?.timeString}}</div>
+
+					<div *ngIf='!mobile || message?.authorType === authorTypes.Local'>
+						<span>&nbsp;</span>
+						&ngsp;
+						<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
+					</div>
+
+					<div *ngIf='mobile && message?.authorType === authorTypes.Remote'>
+						&nbsp;&mdash;&nbsp;&ngsp;{{message?.author | async}}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<ng-template #emailUI>
+			<div
+				fxLayout='row'
+				class='cyph-theme-light email-ui'
+				[class.email-local]='message?.authorType === authorTypes.Local'
+			>
+				<mat-card fxFlex>
+					<mat-card-header>
+						<img
+							mat-card-avatar
+							cyphTranslate
+							class='avatar-image'
+							[src]='message?.authorUser?.avatar | async'
+							alt='User Avatar'
+							*ngIf='!!message?.authorUser'
+						/>
+						<mat-card-title fxFlex>
+							<div fxFlex [fxLayout]='mobile ? "column" : "row"'>
+								<span *ngIf='!!message?.authorUser'>
+									<strong>{{message?.authorUser?.name | async}}&nbsp;</strong>
+									&ngsp;
+									<small>{{message?.author | async}}</small>
+								</span>
+								<strong *ngIf='!message?.authorUser'>
+									{{message?.author | async}}
+								</strong>
+								<div fxFlex *ngIf='!mobile'></div>
+								<div>
+									<span>{{message?.dateTimeString}}</span>
+									&ngsp;
+									<ng-container
+										*ngTemplateOutlet='messageConfirmation'
+									></ng-container>
+								</div>
+							</div>
+						</mat-card-title>
+					</mat-card-header>
+					<div class='email-divider' mat-card-image></div>
+					<mat-card-content>
+						<ng-container
+							*ngTemplateOutlet='messageContent; context: {value: value}'
+						></ng-container>
+					</mat-card-content>
+				</mat-card>
+			</div>
+		</ng-template>
+
+		<div
+			fxLayout='row'
+			fxLayoutAlign='center center'
+			fxLayoutGap='10px'
+			class='self-destruct-timer'
+			*ngIf='message?.selfDestructTimer'
+		>
+			<div cyphTranslate>Message will self-destruct in</div>
+			<div class='countdown'>{{message?.selfDestructTimer?.timestamp | async}}</div>
+		</div>
+	</div>
+	<div class='self-destruct-cover'></div>
+</div>
+
+<ng-template #messageConfirmation>
+	<ng-container *ngIf='
+		pending || message?.authorType !== authorTypes.Local;
+		else messageConfirmed
+	'>
+		<span class='confirmation-checks visibility-hidden'>
+			<mat-icon>check</mat-icon>
+			&ngsp;
+			<mat-icon>check</mat-icon>
+		</span>
+	</ng-container>
+	<ng-template #messageConfirmed>
+		<ng-container *ngIf='confirmed; else messageUnconfirmed'>
+			<span class='confirmation-checks'>
+				<mat-icon>check</mat-icon>
+				&ngsp;
+				<mat-icon>check</mat-icon>
+			</span>
+		</ng-container>
+	</ng-template>
+	<ng-template #messageUnconfirmed>
+		<span class='confirmation-checks' [matTooltip]='stringsService.messageUnconfirmed'>
+			<mat-icon>check</mat-icon>
+			&ngsp;
+			<mat-icon class='visibility-hidden'>check</mat-icon>
+		</span>
+	</ng-template>
+</ng-template>
+
+<ng-template #messageContent let-value='value'>
+	<span (click)='click($event)'>
+		<cyph-calendar-invite
+			[isDisabled]='true'
+			[mobile]='mobile'
+			[ngModel]='value.calendarInvite'
+			*ngIf='value.calendarInvite; else formValue'
+		></cyph-calendar-invite>
+		<ng-template #formValue>
+			<cyph-dynamic-form
+				[form]='value.form'
+				[isDisabled]='true'
+				[mobile]='mobile'
+				*ngIf='value.form; else quillValue'
+			></cyph-dynamic-form>
+		</ng-template>
+		<ng-template #quillValue>
+			<cyph-quill
+				[content]='quill | async'
+				[isDisabled]='true'
+				(ready)='resolveViewReady()'
+				*ngIf='value.quill && value.quill.length > 0; else textValue'
+			></cyph-quill>
+		</ng-template>
+		<ng-template #textValue>
+			<cyph-markdown
+				class='message-text'
+				[markdown]='value.text'
+				[targetSelf]='message?.authorType === authorTypes.App'
+			></cyph-markdown>
+		</ng-template>
+	</span>
+</ng-template>

@@ -1,0 +1,37 @@
+<div fxLayout='column' fxLayoutAlign='center' fxLayoutGap='16px'>
+	<cyph-account-contacts-search
+		#accountContactsSearch
+		[placeholder]='stringsService.to'
+	></cyph-account-contacts-search>
+	<div>
+		<cyph-account-contact
+			class='active animated slideInDown'
+			[contact]='accountContactsSearch?.searchBar?.filter | async'
+			(click)='accountContactsSearch?.searchBar?.clearFilter()'
+		></cyph-account-contact>
+	</div>
+	<mat-card class='file' *ngIf='file'>
+		<mat-card-header fxLayout='row'>
+			<mat-icon mat-card-avatar>
+				{{accountFilesService.getThumbnail(file?.mediaType)}}
+			</mat-icon>
+			<mat-card-title>
+				{{file?.name}}
+			</mat-card-title>
+			<mat-card-subtitle>
+				<div>
+					<span cyphTranslate>Type:</span>
+					&ngsp;
+					<span>{{file?.mediaType}}</span>
+				</div>
+				<div>
+					<span cyphTranslate>Size:</span>
+					&ngsp;
+					<span>{{readableByteLength(file?.size)}}</span>
+				</div>
+			</mat-card-subtitle>
+		</mat-card-header>
+	</mat-card>
+
+	<button (click)='share()' mat-raised-button>Share File</button>
+</div>

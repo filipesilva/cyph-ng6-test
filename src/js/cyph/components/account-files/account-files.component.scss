@@ -1,0 +1,13 @@
+@import '../../../../css/mixins';
+
+.file-upload {
+	height: 10em;
+}
+
+::ng-deep .free-space {
+	max-width: 33%;
+	text-align: center;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+}

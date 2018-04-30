@@ -1,0 +1,124 @@
+<div
+	fxFlexFill
+	fxLayoutAlign='center center'
+	class='login-form animated fadeIn'
+	[class.checking]='checking'
+	[class.mobile]='envService.isMobile'
+>
+	<mat-card
+		fxFlex='95'
+		fxFlex.gt-sm='75'
+		fxFlex.gt-md='50'
+		fxFlex.xs='100'
+		*ngIf='pinUnlock !== undefined'
+	>
+		<cyph-logo cardHeader></cyph-logo>
+		<mat-card-title cyphTranslate>
+			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>
+			<span *ngIf='pinUnlock'>{{stringsService.unlockTitle}}</span>
+		</mat-card-title>
+		<mat-card-subtitle *ngIf='pinUnlock'>
+			<p>
+				<span cyphTranslate>Welcome back</span>
+				&ngsp;
+				<span>{{savedUsername}}!</span>
+				&ngsp;
+				<span cyphTranslate>Enter your PIN below.</span>
+			</p>
+			<p>
+				<span cyphTranslate>Not</span>
+				&ngsp;
+				<span>{{savedUsername}}?</span>
+				&ngsp;
+				<a cyphTranslate (click)='pinUnlock = false'>Sign in as a different user</a>
+				&ngsp;
+				<span cyphTranslate>or</span>
+				&ngsp;
+				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
+			</p>
+		</mat-card-subtitle>
+		<mat-card-content>
+			<form autocomplete='off' ngNativeValidate (submit)='submit()'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
+						{{
+							pinUnlock ?
+								stringsService.invalidPIN :
+								stringsService.invalidCredentials
+						}}
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock'>
+					<mat-form-field fxFlex='60'>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]='username'
+							[textMask]='usernameMask'
+							name='cyphUsername'
+							placeholder='Username'
+							required
+							data-lpignore='true'
+						/>
+					</mat-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock || pinIsCustom'>
+					<mat-form-field fxFlex='60' *ngIf='pinUnlock'>
+						<input
+							matInput
+							[(ngModel)]='pin'
+							name='lockScreenPIN'
+							[type]='hidePassword ? "password" : "text"'
+							[placeholder]='stringsService.pin'
+							required
+							data-lpignore='true'
+						/>
+						<mat-icon
+							matSuffix
+							class='suffix-button'
+							(click)='hidePassword = !hidePassword'
+						>
+							{{hidePassword ? 'visibility' : 'visibility_off'}}
+						</mat-icon>
+					</mat-form-field>
+					<mat-form-field fxFlex='60' *ngIf='!pinUnlock'>
+						<input
+							matInput
+							[(ngModel)]='masterKey'
+							name='masterKey'
+							[type]='hidePassword ? "password" : "text"'
+							[placeholder]='stringsService.masterKey'
+							required
+							data-lpignore='true'
+						/>
+						<mat-icon
+							matSuffix
+							class='suffix-button'
+							(click)='hidePassword = !hidePassword'
+						>
+							{{hidePassword ? 'visibility' : 'visibility_off'}}
+						</mat-icon>
+					</mat-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='pinUnlock && !pinIsCustom'>
+					<cyph-pin-input
+						fxFlex
+						[(ngModel)]='pin'
+						name='pin'
+						required
+					></cyph-pin-input>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<button
+						mat-button
+						type='submit'
+						[matTooltip]='pinUnlock ? stringsService.unlock : stringsService.logIn'
+					>
+						{{pinUnlock ? stringsService.unlock : stringsService.logIn}}
+					</button>
+				</div>
+			</form>
+		</mat-card-content>
+		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+	</mat-card>
+</div>

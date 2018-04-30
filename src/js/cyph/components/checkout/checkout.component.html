@@ -1,0 +1,71 @@
+<mat-progress-spinner mode='indeterminate' *ngIf='pending'></mat-progress-spinner>
+<form ngNativeValidate (submit)='submit()'>
+	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
+		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
+			<div [id]='containerID' class='braintree'></div>
+			<div>
+				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
+					<mat-form-field fxFlex>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]='name'
+							name='name'
+							placeholder='Name'
+							required
+						/>
+					</mat-form-field>
+					<mat-form-field fxFlex>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]='email'
+							name='email'
+							type='email'
+							placeholder='Email'
+							required
+						/>
+					</mat-form-field>
+				</div>
+			</div>
+			<div>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						cyphTranslate
+						[(ngModel)]='company'
+						name='company'
+						placeholder='Company (optional)'
+					/>
+				</mat-form-field>
+			</div>
+		</div>
+		<div fxLayoutAlign='center center'>
+			<button mat-button type='submit'>
+				<span cyphTranslate>Confirm</span>
+				&ngsp;
+				<span>${{amount}}</span>
+				&ngsp;
+				<span>
+					<span *ngIf='subscriptionType === undefined' cyphTranslate>payment</span>
+					<span *ngIf='subscriptionType === subscriptionTypes.annual' cyphTranslate>
+						annual subscription
+					</span>
+					<span *ngIf='subscriptionType === subscriptionTypes.monthly' cyphTranslate>
+						monthly subscription
+					</span>
+				</span>
+			</button>
+		</div>
+	</div>
+	<div class='confirmation' *ngIf='complete'>
+		<ng-content *ngIf='success'></ng-content>
+		<div *ngIf='!success'>
+			<span cyphTranslate>Payment failed.</span>
+			&ngsp;
+			<span class='retry' (click)='ngAfterViewInit()' cyphTranslate>Click here</span>
+			&ngsp;
+			<span cyphTranslate>to try again.</span>
+		</div>
+	</div>
+</form>

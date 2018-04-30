@@ -1,0 +1,81 @@
+<span [class.curtain]='cyphertextService.isVisible'>
+	<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
+		<canvas [fxShow]='envService.showGranim' id='main-chat-gradient'></canvas>
+
+		<h3
+			class='cyph-banner emphasis warn'
+			*ngIf='
+				appService.chatRootState !== chatRootStates.chat &&
+				(envService.webSignError | async)
+			'
+		>
+			<span cyphTranslate>WARNING: Your</span>
+			&ngsp;
+			<span>{{stringsService.product}}</span>
+			&ngsp;
+			<span cyphTranslate>instance has a problem. See</span>
+			&ngsp;
+			<a [href]='envService.homeUrl + "websignerror"' cyphTranslate>here</a>
+			&ngsp;
+			<span cyphTranslate>for more details and the solution.</span>
+		</h3>
+
+		<cyph-chat-main
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			[hideDisconnectMessage]='envService.coBranded'
+			[messageCountInTitle]='true'
+			*ngIf='appService.chatRootState === chatRootStates.chat'
+			[@fadeIn]='"in"'
+		>
+			<cyph-contact to='feedback' *ngIf='splitTestingService.groupA'></cyph-contact>
+			<cyph-signup-form *ngIf='splitTestingService.groupB'>
+				{{stringsService.signupMessage}}
+			</cyph-signup-form>
+		</cyph-chat-main>
+
+		<cyph-link-connection
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			*ngIf='appService.chatRootState === chatRootStates.waitingForFriend'
+			[@fadeIn]='"in"'
+		></cyph-link-connection>
+
+		<cyph-not-found
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			*ngIf='appService.chatRootState === chatRootStates.error'
+			[@fadeIn]='"in"'
+		></cyph-not-found>
+
+		<div
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			id='blank'
+			*ngIf='appService.chatRootState === chatRootStates.blank'
+		></div>
+
+		<footer *ngIf='!(
+			appService.chatRootState === chatRootStates.chat &&
+			p2pService.isActiveOrInitialCall
+		)'>
+			<div>
+				<cyph-chat-message-box
+					[style.visibility]='!chatService.initiated ? "hidden" : undefined'
+					*ngIf='
+						appService.chatRootState === chatRootStates.chat &&
+						!chatService.chatSelfDestruct
+					'
+				></cyph-chat-message-box>
+
+				<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
+			</div>
+		</footer>
+	</section>
+
+	<cyph-chat-cyphertext></cyph-chat-cyphertext>
+</span>

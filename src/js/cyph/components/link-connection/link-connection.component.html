@@ -1,0 +1,186 @@
+<div
+	fxFlex
+	fxFlexFill
+	fxLayout='column'
+	fxLayoutAlign='center stretch'
+	class='link-connection loading'
+>
+	<div class='logo-animation'>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+	</div>
+	<div>
+		<span *ngIf='isPassive && !envService.isTelehealth' cyphTranslate>
+			Waiting for user to join...
+		</span>
+		<span *ngIf='isPassive && envService.isTelehealth' cyphTranslate>
+			You have successfully checked in. Your telehealth session
+			will begin when the other party connects.
+		</span>
+		<div *ngIf='!isPassive'>
+			<span *ngIf='envService.isTelehealth' cyphTranslate>
+				Send the link below to the patient. When they open it,
+				your telehealth session will begin.
+			</span>
+			<span *ngIf='!envService.isTelehealth' cyphTranslate>
+				Send the link below to another user. When they open it,
+				you'll be securely connected.
+			</span>
+			<br />
+			<br />
+
+			<div fxLayoutAlign='center center' *ngIf='!envService.isMobile'>
+				<mat-form-field fxFlex='50'>
+					<input
+						matInput
+						class='connect-link-input'
+						[(ngModel)]='link'
+						[matTooltip]='stringsService.linkTooltip'
+					/>
+				</mat-form-field>
+				<button
+					mat-icon-button
+					matTooltip='Copy to Clipboard'
+					(click)='copyToClipboard()'
+					cyphTranslate
+				>
+					<mat-icon>content_copy</mat-icon>
+				</button>
+			</div>
+
+			<div class='connect-link-mobile' *ngIf='envService.isMobile'>
+				<a
+					class='connect-link-link'
+					[href]='link'
+					[matTooltip]='stringsService.linkTooltip'
+				>{{link}}</a>
+
+				<br />
+				<br />
+
+				<a mat-mini-fab matTooltip='SMS' [href]='linkSMS' cyphTranslate>
+					<mat-icon>textsms</mat-icon>
+				</a>
+
+				<span class='divider'>
+					&nbsp;
+				</span>
+
+				<a mat-mini-fab matTooltip='Email' target='_self' [href]='linkMailto' cyphTranslate>
+					<mat-icon>email</mat-icon>
+				</a>
+
+				<span class='divider'>
+					&nbsp;
+				</span>
+
+				<button
+					mat-mini-fab
+					matTooltip='Copy to Clipboard'
+					(click)='copyToClipboard()'
+					cyphTranslate
+				>
+					<mat-icon>content_copy</mat-icon>
+				</button>
+			</div>
+		</div>
+
+		<br />
+		<div class='timer' *ngIf='timer'>
+			<span cyphTranslate>
+				Link expires in
+			</span>
+			&ngsp;
+			<span class='countdown'>
+				{{timer?.timestamp | async}}
+			</span>
+			&ngsp;
+			<button
+				mat-icon-button
+				(click)='addTime(60000)'
+				matTooltip='Increase Time by One Minute'
+				cyphTranslate
+			>
+				<mat-icon>alarm_add</mat-icon>
+			</button>
+		</div>
+	</div>
+
+	<br />
+	<br />
+
+	<div
+		fxLayout='row'
+		fxLayoutAlign='center center'
+		*ngIf='envService.environment.customBuild?.config.pro'
+	>
+		<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
+					Advanced Features
+				</mat-slide-toggle>
+			</div>
+
+			<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures'>
+				<mat-form-field fxFlex fxLayout='column'>
+					<textarea
+						matInput
+						cyphTranslate
+						[(ngModel)]='queuedMessageDraft'
+						placeholder='Queue up first message'
+						rows='3'
+					></textarea>
+				</mat-form-field>
+				<div fxLayout='row'>
+					<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+						<button
+							mat-icon-button
+							matTooltip='Save'
+							cyphTranslate
+							(click)='chatService.setQueuedMessage(queuedMessageDraft)'
+						>
+							<mat-icon>save</mat-icon>
+						</button>
+						<mat-button-toggle
+							matTooltip='Self-Destruct'
+							cyphTranslate
+							[checked]='chatService.chatSelfDestruct'
+							(change)='chatService.chatSelfDestruct = !chatService.chatSelfDestruct'
+						>
+							<mat-icon>timer</mat-icon>
+						</mat-button-toggle>
+					</div>
+					<div
+						*ngIf='chatService.chatSelfDestruct'
+						class='self-destruct-timer'
+					>
+						<mat-form-field>
+							<input
+								matInput
+								[(ngModel)]='chatService.chatSelfDestructTimeout'
+								name='timer'
+								max='9999'
+								type='number'
+							/>
+						</mat-form-field>
+						&nbsp;
+						<span cyphTranslate>Seconds</span>
+					</div>
+				</div>
+				<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+					<mat-button-toggle
+						matTooltip='Walkie Talkie Mode'
+						cyphTranslate
+						[checked]='chatService.walkieTalkieMode'
+						(change)='chatService.walkieTalkieMode = !chatService.walkieTalkieMode'
+					>
+						<mat-icon svgIcon='walkie-talkie'></mat-icon>
+					</mat-button-toggle>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

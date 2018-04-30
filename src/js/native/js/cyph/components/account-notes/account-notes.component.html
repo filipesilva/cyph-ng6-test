@@ -1,0 +1,143 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner'
+	*ngIf='!realTime || accountService.enableDocs'
+>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<mat-card
+			class='note animated slideInDown'
+			*ngFor='let note of notes | async; trackBy: trackByID; let i = index'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
+			[routerLink]='note.id'
+		>
+			<mat-card-header fxLayout='row'>
+				<mat-card-title>
+					{{note.name || stringsService.untitled}}
+				</mat-card-title>
+				<mat-card-subtitle>
+					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
+					<div *ngIf='
+						!note.wasAnonymousShare &&
+						accountDatabaseService.currentUser.value &&
+						accountDatabaseService.currentUser.value?.user.username !== note.owner
+					'>
+						<br />
+						<span cyphTranslate>Owner:</span>
+						&ngsp;
+						<a [routerLink]='accountService.routeRoot + "profile/" + note.owner'>
+							{{note.owner}}
+						</a>
+					</div>
+					<div cyphTranslate *ngIf='note.wasAnonymousShare'>
+						Received from anonymous
+					</div>
+				</mat-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Edit'
+						[routerLink]='note.id + "/edit"'
+						*ngIf='
+							accountDatabaseService.currentUser.value &&
+							accountDatabaseService.currentUser.value?.user.username === note.owner
+						'
+					>
+						<mat-icon>edit</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Share'
+						(click)='
+							accountFilesService.shareFilePrompt(note);
+							$event.stopPropagation();
+						'
+					>
+						<mat-icon>share</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Delete'
+						(click)='
+							accountFilesService.remove(note);
+							$event.stopPropagation();
+						'
+					>
+						<mat-icon>delete</mat-icon>
+					</button>
+				</div>
+			</mat-card-header>
+		</mat-card>
+
+		<h2 *ngIf='(incomingNotes | async)?.length > 0'>
+			<span cyphTranslate *ngIf='realTime'>Incoming Docs</span>
+			<span cyphTranslate *ngIf='!realTime'>Incoming Notes</span>
+		</h2>
+
+		<mat-card
+			class='note animated'
+			*ngFor='let note of incomingNotes | async; trackBy: trackByID; let i = index'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
+		>
+			<mat-card-header fxLayout='row'>
+				<mat-card-title>
+					{{note.name || stringsService.untitled}}
+				</mat-card-title>
+				<mat-card-subtitle>
+					<div *ngIf='!note.wasAnonymousShare'>
+						<span cyphTranslate>Shared by</span>
+						&ngsp;
+						<a [routerLink]='accountService.routeRoot + "profile/" + note.owner'>
+							{{note.owner}}
+						</a>
+					</div>
+					<div cyphTranslate *ngIf='note.wasAnonymousShare'>
+						Shared anonymously
+					</div>
+				</mat-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Accept'
+						(click)='accountFilesService.acceptIncomingFile(note)'
+					>
+						<mat-icon>check</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Reject'
+						(click)='accountFilesService.acceptIncomingFile(note, false)'
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</div>
+			</mat-card-header>
+		</mat-card>
+	</div>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner'
+	></mat-progress-spinner>
+
+	<button
+		mat-fab
+		[matTooltip]='realTime ? stringsService.newDoc : stringsService.newNote'
+		matTooltipPosition='above'
+		routerLink='new'
+		class='fixed-fab'
+	>
+		<mat-icon>add</mat-icon>
+	</button>
+</div>

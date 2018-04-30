@@ -1,0 +1,45 @@
+<form #messageForm='ngForm' fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='submit()'>
+	<ng-container *ngIf='showHeader'>
+		<cyph-account-contact
+			[clickable]='false'
+			[contact]='recipient === undefined ? undefined : recipient | async'
+			class='cyph-inverted-theme'
+			[class.visibility-hidden]='
+				(recipient === undefined ? undefined : recipient | async) === undefined
+			'
+		></cyph-account-contact>
+
+		<hr />
+	</ng-container>
+
+	<cyph-chat-message-box-inherit-ng-form
+		#chatMessageBox
+		[accounts]='true'
+		[calendarInviteFollowUp]='calendarInviteFollowUp'
+		[calendarInviteReasons]='calendarInviteReasons'
+		[customSendFunction]='customSendFunction'
+		[fileAccept]='fileAccept'
+		[messageType]='messageType'
+		[showSendButton]='!showHeader'
+		[showUnreadCount]='showUnreadCount'
+	></cyph-chat-message-box-inherit-ng-form>
+
+	<div
+		fxLayoutAlign='left'
+		*ngIf='showHeader && messageType !== chatMessageValueTypes.Form'
+	>
+		<button
+			mat-raised-button
+			matTooltip='Send'
+			color='accent'
+			[disabled]='
+				messageForm.invalid ||
+				(recipient !== undefined && (recipient | async) === undefined)
+			'
+			type='submit'
+			cyphTranslate
+		>
+			Send
+		</button>
+	</div>
+</form>

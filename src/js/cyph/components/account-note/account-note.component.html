@@ -1,0 +1,90 @@
+<div
+	fxFlexFill
+	fxLayoutAlign='center start'
+	[class.initiating]='showSpinner'
+	*ngIf='!realTime || accountService.enableDocs'
+>
+	<mat-card fxFlex='90' class='note'>
+		<div fxLayout='column'>
+			<div fxLayoutAlign='center center' fxLayout='row'>
+				<mat-card-title fxFlex>
+					<div *ngIf='!editable'>
+						{{(note?.metadata | async)?.name || stringsService.untitled}}
+					</div>
+					<mat-form-field fxFlex *ngIf='editable'>
+						<input
+							matInput
+							cyphTranslate
+							[ngModel]='(note?.metadata | async)?.name || stringsService.untitled'
+							(ngModelChange)='noteData.nameChange = $event'
+							(blur)='realTimeTitleUpdate()'
+							[maxlength]='accountFilesService.maxNameLength'
+							required
+						/>
+					</mat-form-field>
+				</mat-card-title>
+				<mat-card-header>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Edit'
+						routerLink='edit'
+						*ngIf='!editable'
+					>
+						<mat-icon>edit</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Close Editor'
+						[routerLink]='newNote ? ".." : "."'
+						*ngIf='editable'
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Save'
+						(click)='saveNote()'
+						*ngIf='editable && !realTime'
+					>
+						<mat-icon>save</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Delete'
+						*ngIf='!newNote'
+						(click)='accountFilesService.remove(note?.metadata)'
+					>
+						<mat-icon>delete</mat-icon>
+					</button>
+				</mat-card-header>
+			</div>
+			<mat-card-content fxFlex fxLayout='column'>
+				<div [class.cyph-light-theme]='editable'>
+					<mat-card [class.editable]='editable'>
+						<mat-card-content>
+							<cyph-quill
+								[content]='note?.content | async'
+								[deltas]='note?.doc?.deltas'
+								[isDisabled]='!editable'
+								(contentChange)='onChange($event)'
+							></cyph-quill>
+							<!--
+								[selections]='note?.doc?.selections'
+								(selectionChange)='onSelectionChange($event)'
+							-->
+						</mat-card-content>
+					</mat-card>
+				</div>
+			</mat-card-content>
+		</div>
+	</mat-card>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='showSpinner'
+	></mat-progress-spinner>
+</div>

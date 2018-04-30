@@ -1,0 +1,246 @@
+<div fxFlexFill *ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'>
+	<div
+		class='calendar-invite-message-box'
+		[class.mobile]='envService.isMobile'
+		fxFlexFill
+		*ngIf='messageType === chatMessageValueTypes.CalendarInvite'
+	>
+		<button
+			mat-icon-button
+			matTooltip='Send'
+			(click)='send()'
+			cyphTranslate
+			*ngIf='showSendButton'
+		>
+			<mat-icon>send</mat-icon>
+		</button>
+		<cyph-calendar-invite
+			fxFlexFill
+			name='calendar-invite-message'
+			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+			[followUp]='calendarInviteFollowUp'
+			[reasons]='calendarInviteReasons'
+			*ngIf='!inheritsNgForm'
+		></cyph-calendar-invite>
+		<cyph-calendar-invite-inherit-ng-form
+			fxFlexFill
+			name='calendar-invite-message'
+			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+			[followUp]='calendarInviteFollowUp'
+			[reasons]='calendarInviteReasons'
+			*ngIf='inheritsNgForm'
+		></cyph-calendar-invite-inherit-ng-form>
+	</div>
+
+	<div
+		class='form-message-box'
+		[class.mobile]='envService.isMobile'
+		fxFlexFill
+		*ngIf='messageType === chatMessageValueTypes.Form'
+	>
+		<cyph-dynamic-form
+			[form]='chatService.chat.currentMessage.form'
+			(submitForm)='chatService.chat.currentMessage.form = $event; send()'
+		></cyph-dynamic-form>
+	</div>
+
+	<div
+		class='quill-message-box'
+		[class.mobile]='envService.isMobile'
+		fxFlexFill
+		*ngIf='messageType === chatMessageValueTypes.Quill'
+	>
+		<button
+			mat-icon-button
+			matTooltip='Send'
+			(click)='send()'
+			cyphTranslate
+			*ngIf='showSendButton'
+		>
+			<mat-icon>send</mat-icon>
+		</button>
+		<cyph-quill
+			fxFlexFill
+			name='quill-message'
+			[(ngModel)]='chatService.chat.currentMessage.quill'
+		></cyph-quill>
+	</div>
+
+	<div
+		class='text-message-box'
+		[class.mobile]='envService.isMobile'
+		fxFlexFill
+		*ngIf='messageType === chatMessageValueTypes.Text'
+	>
+		<div fxFlex>
+			<textarea
+				fxFlex
+				class='message-box tabIndent'
+				name='text-message'
+				[(ngModel)]='chatService.chat.currentMessage.text'
+				(ngModelChange)='chatService.messageChange()'
+				placeholder='Send a secure message...'
+				cyphTranslate
+			></textarea>
+		</div>
+
+		<div *ngIf='envService.isMobile'>
+			<div
+				class='message-box-button-group'
+				*ngIf='showSendButton && !!chatService.chat.currentMessage.text'
+				[@slideInOutBottom]='"in"'
+			>
+				<button
+					mat-icon-button
+					matTooltip='Send'
+					(click)='mobileButtonHandlers.send()'
+					cyphTranslate
+				>
+					<mat-icon>send</mat-icon>
+				</button>
+			</div>
+			<div
+				class='message-box-button-group'
+				*ngIf='!chatService.chat.currentMessage.text'
+				[@slideInOutBottom]='"in"'
+			>
+				<button
+					mat-icon-button
+					matTooltip='Video Call'
+					(click)='mobileButtonHandlers.videoCall()'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					cyphTranslate
+				>
+					<mat-icon>video_call</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					matTooltip='Voice Call'
+					(click)='mobileButtonHandlers.voiceCall()'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					cyphTranslate
+				>
+					<mat-icon>call</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					matTooltip='Send File or Photo'
+					cyphTranslate
+				>
+					<mat-icon>attach_file</mat-icon>
+					<cyph-file-input
+						[accept]='fileAccept'
+						(fileChange)='mobileButtonHandlers.fileTransfer($event)'
+					></cyph-file-input>
+				</button>
+			</div>
+
+			<button
+				mat-icon-button
+				[matMenuTriggerFor]='menu'
+				class='menu-button'
+				*ngIf='!accounts'
+			>
+				<mat-icon>more_horiz</mat-icon>
+			</button>
+			<mat-menu #menu='matMenu'>
+				<button mat-menu-item (click)='chatService.helpButton()'>
+					<mat-icon>help_outline</mat-icon>
+					<span>{{stringsService.help}}</span>
+				</button>
+				<button mat-menu-item (click)='chatService.disconnectButton()' *ngIf='!accounts'>
+					<mat-icon>close</mat-icon>
+					<span>{{stringsService.disconnect}}</span>
+				</button>
+			</mat-menu>
+		</div>
+
+		<smd-fab-speed-dial
+			animationMode='scale'
+			[open]='isSpeedDialOpen'
+			(mouseleave)='isSpeedDialOpen = false'
+			*ngIf='!envService.isMobile'
+		>
+			<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
+				<button mat-fab>
+					<mat-icon>add</mat-icon>
+				</button>
+			</smd-fab-trigger>
+			<smd-fab-actions>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					matTooltip='Send File or Photo'
+					matTooltipPosition='left'
+				>
+					<mat-icon>attach_file</mat-icon>
+					<cyph-file-input
+						[accept]='fileAccept'
+						(fileChange)='fileTransferService.send($event)'
+					></cyph-file-input>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					matTooltip='Voice Call'
+					matTooltipPosition='left'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					(click)='p2pService.voiceCallButton()'
+				>
+					<mat-icon>call</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					matTooltip='Video Call'
+					matTooltipPosition='left'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					(click)='p2pService.videoCallButton()'
+				>
+					<mat-icon>video_call</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					class='alt'
+					[matTooltip]='stringsService.help'
+					matTooltipPosition='left'
+					(click)='chatService.helpButton()'
+				>
+					<mat-icon>help_outline</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					class='alt'
+					[matTooltip]='stringsService.disconnect'
+					matTooltipPosition='left'
+					(click)='chatService.disconnectButton()'
+					*ngIf='!accounts'
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+			</smd-fab-actions>
+		</smd-fab-speed-dial>
+
+		<h3
+			fxFlex
+			class='new-messages cyph-banner emphasis'
+			*ngIf='showUnreadCount && scrollService.unreadItemCount > 0'
+			(click)='scrollService.scrollDown()'
+		>
+			↓&nbsp;
+			{{scrollService.unreadItemCount}}
+			{{stringsService.newString}}
+			{{
+				scrollService.unreadItemCount === 1 ?
+					stringsService.message :
+					stringsService.messages
+			}}
+		</h3>
+	</div>
+</div>

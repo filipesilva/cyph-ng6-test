@@ -1,0 +1,181 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner'
+>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<mat-card
+			class='file animated slideInDown'
+			*ngFor='
+				let file of accountFilesService.filesListFiltered.files | async;
+				trackBy: trackByID;
+				let i = index;
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
+			[routerLink]='accountService.routeRoot + "files"'
+			(click)='accountFilesService.openFile(file.id)'
+		>
+			<mat-card-header fxLayout='row'>
+				<mat-icon mat-card-avatar>
+					{{accountFilesService.getThumbnail(file.mediaType)}}
+				</mat-icon>
+				<mat-card-title>
+					{{file.name}}
+				</mat-card-title>
+				<mat-card-subtitle>
+					<div>
+						<span cyphTranslate>Type:</span>
+						&ngsp;
+						<span>{{file.mediaType}}</span>
+					</div>
+					<div>
+						<span cyphTranslate>Size:</span>
+						&ngsp;
+						<span>{{readableByteLength(file.size)}}</span>
+					</div>
+					<div *ngIf='
+						!file.wasAnonymousShare &&
+						accountDatabaseService.currentUser.value &&
+						accountDatabaseService.currentUser.value?.user.username !== file.owner
+					'>
+						<span cyphTranslate>Owner:</span>
+						&ngsp;
+						<a [routerLink]='accountService.routeRoot + "profile/" + file.owner'>
+							{{file.owner}}
+						</a>
+					</div>
+					<div cyphTranslate *ngIf='file.wasAnonymousShare'>
+						Received from anonymous
+					</div>
+				</mat-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						class='settings'
+						matTooltip='Settings'
+						*ngIf='false'
+					>
+						<mat-icon>settings</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Share'
+						(click)='
+							accountFilesService.shareFilePrompt(file);
+							$event.stopPropagation();
+						'
+					>
+						<mat-icon>share</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						class='delete'
+						matTooltip='Delete'
+						(click)='
+							accountFilesService.remove(file);
+							$event.stopPropagation();
+						'
+					>
+						<mat-icon>delete</mat-icon>
+					</button>
+				</div>
+			</mat-card-header>
+		</mat-card>
+
+		<div
+			class='file-upload'
+			fxLayoutAlign='center'
+			fxLayout='row'
+			matTooltip='Upload'
+			matTooltipPosition='above'
+			cyphDropZone
+			cyphTranslate
+			(fileDrop)='accountFilesService.upload($event.name, $event)'
+		>
+			<mat-icon>file_upload</mat-icon>
+		</div>
+
+		<h2
+			cyphTranslate
+			*ngIf='(accountFilesService.incomingFilesFiltered.files | async)?.length > 0'
+		>
+			Incoming Files
+		</h2>
+
+		<mat-card
+			class='file animated'
+			*ngFor='
+				let file of accountFilesService.incomingFilesFiltered.files | async;
+				trackBy: trackByID;
+				let i = index;
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
+		>
+			<mat-card-header fxLayout='row'>
+				<mat-icon mat-card-avatar>
+					{{accountFilesService.getThumbnail(file.mediaType)}}
+				</mat-icon>
+				<mat-card-title>
+					{{file.name}}
+				</mat-card-title>
+				<mat-card-subtitle>
+					<div>
+						<span cyphTranslate>Type:</span>
+						&ngsp;
+						<span>{{file.mediaType}}</span>
+					</div>
+					<div>
+						<span cyphTranslate>Size:</span>
+						&ngsp;
+						<span>{{readableByteLength(file.size)}}</span>
+					</div>
+					<div *ngIf='!file.wasAnonymousShare'>
+						<span cyphTranslate>Shared by</span>
+						&ngsp;
+						<a [routerLink]='accountService.routeRoot + "profile/" + file.owner'>
+							{{file.owner}}
+						</a>
+					</div>
+					<div cyphTranslate *ngIf='file.wasAnonymousShare'>
+						Shared anonymously
+					</div>
+				</mat-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						class='accept'
+						matTooltip='Accept'
+						(click)='accountFilesService.acceptIncomingFile(file)'
+					>
+						<mat-icon>check</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						class='reject'
+						matTooltip='Reject'
+						(click)='accountFilesService.acceptIncomingFile(file, false)'
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</div>
+			</mat-card-header>
+		</mat-card>
+		<cyph-account-storage-analytics></cyph-account-storage-analytics>
+	</div>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner'
+	></mat-progress-spinner>
+</div>

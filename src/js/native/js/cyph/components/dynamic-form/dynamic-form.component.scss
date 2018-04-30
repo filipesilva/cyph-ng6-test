@@ -1,0 +1,18 @@
+@import '../../../../css/mixins';
+
+h3.label {
+	text-align: center;
+}
+
+.mat-form-field {
+	width: auto;
+}
+
+mat-radio-group {
+	margin-left: auto;
+	margin-right: auto;
+
+	mat-radio-button {
+		padding: 10px;
+	}
+}

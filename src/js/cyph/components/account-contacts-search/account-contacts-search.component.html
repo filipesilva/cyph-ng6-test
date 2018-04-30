@@ -1,0 +1,11 @@
+<cyph-search-bar
+	#searchBar
+	[control]='searchControl'
+	[filterTransform]='userFilterTransform'
+	[listLength]='searchListLength'
+	[options]='searchOptions'
+	[placeholder]='placeholder || defaultPlaceHolder'
+	[query]='searchUsername'
+	[spinner]='searchSpinner'
+	(filterChange)='userFilterChange.emit($event)'
+></cyph-search-bar>

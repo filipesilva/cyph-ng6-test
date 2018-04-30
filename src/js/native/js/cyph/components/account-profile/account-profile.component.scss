@@ -1,0 +1,280 @@
+@import '../../../../css/mixins';
+
+$header-size: 135px;
+
+.profile {
+	text-align: center;
+	font-family: Ubuntu;
+
+	&.mobile {
+		.avatar {
+			width: 10em;
+			height: 10em;
+		}
+	}
+
+	.avatar {
+		cursor: auto;
+		width: 18em;
+		height: 18em;
+		box-shadow: 0px 20px 42px 0px rgba(0, 0, 0, 0.3);
+		border-width: 10px !important;
+	}
+
+	.member-list:not(.doctor-list-only) {
+		height: 340px;
+	}
+
+	.name {
+		font-size: 42px;
+		margin-top: 25px;
+		margin-bottom: 10px;
+		font-weight: 500;
+	}
+
+	.username {
+		font-size: 24px;
+		opacity: 0.6;
+	}
+
+	.description {
+		font-size: 20px;
+		width: 100%;
+
+		input {
+			text-align: center;
+		}
+	}
+}
+
+.header {
+	position: absolute;
+	width: 100%;
+	left: 0px;
+	top: 0px;
+}
+
+mat-card {
+	min-width: 50%;
+}
+
+.file-upload {
+	margin-top: 2rem;
+	min-width: 200px;
+}
+
+.edit-buttons {
+	position: relative;
+	float: right;
+	bottom: 80px;
+	right: 10px;
+}
+
+.edit-hide {
+	@include transition(opacity 0.35s ease-in-out);
+}
+
+.change-avatar {
+	opacity: 0;
+	position: absolute;
+	font-size: 3em;
+	width: 6em;
+	height: 6em;
+
+	&:hover {
+		opacity: 1;
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+}
+
+@media (max-height: 600px) {
+	:host > .editing .edit-hide {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	:host > :not(.editing) .edit-hide {
+		opacity: 1;
+	}
+}
+
+/* Telehealth version */
+
+:host > .telehealth {
+	.profile.telehealth {
+		text-align: left;
+
+		&.mobile {
+			.header {
+				position: relative;
+
+				$header-size: 75px;
+
+				height: $header-size;
+				min-height: $header-size;
+
+				.name {
+					margin-top: 24px;
+				}
+
+				.user-info {
+					top: 0;
+				}
+
+				&.xs {
+					height: 60px !important;
+					min-height: 60px !important;
+					max-height: 60px !important;
+
+					.name {
+						margin-top: 7px;
+					}
+
+					&.avatar {
+						width: 3.5em;
+						height: 3.5em;
+					}
+				}
+
+				&:after {
+					height: 20px;
+					width: 100%;
+					content: no-close-quote;
+				}
+
+				.avatar {
+					width: 4.2em;
+					height: 4.2em;
+					margin: 0;
+					top: 11px;
+					right: 11px;
+					border-width: 5px !important;
+				}
+
+				.name {
+					font-size: 26px;
+				}
+
+				.practice {
+					font-size: 12px;
+					height: 0px;
+
+					mat-icon {
+						font-size: 16px;
+						margin-top: 3px;
+					}
+				}
+
+				cyph-account-user-rating {
+					display: none;
+
+					span {
+						text-align: center !important;
+					}
+				}
+			}
+
+			.mat-card {
+				top: 0px !important;
+				max-width: 100% !important;
+				overflow: auto;
+			}
+		}
+
+		.avatar {
+			width: 125px;
+			height: 125px;
+			top: 25px;
+			position: relative;
+			margin: 25px;
+			border-width: 0.42vw !important;
+		}
+
+		.header {
+			height: $header-size;
+			min-height: $header-size;
+			z-index: 42;
+
+			.user-info {
+				top: 10px;
+				position: relative;
+			}
+
+			&:after {
+				height: 20px;
+				width: 100%;
+				content: no-close-quote;
+			}
+		}
+
+		.user-list-header {
+			border-bottom: 1px solid;
+		}
+
+		.content {
+			margin-top: 5px;
+		}
+
+		.practice {
+			mat-icon {
+				@include icon-size(24px);
+			}
+
+			h3 {
+				margin: 3px;
+			}
+		}
+
+		&:not(.mobile) {
+			.mat-card {
+				top: 135px;
+				width: 50vw;
+				overflow: auto;
+
+				&.lt-md {
+					min-width: 90%;
+				}
+
+				&.md {
+					min-width: 75%;
+				}
+
+				&.doctor-list-only {
+					@include calc('max-height', '95vh - #{$header-size}');
+
+					.member-list {
+						@include calc('max-height', '75vh - #{$header-size}');
+					}
+
+					&.lt-md {
+						@include calc('height', '100vh - #{$header-size}');
+					}
+				}
+			}
+		}
+
+		.mat-list-item {
+			height: auto;
+		}
+
+		.name {
+			margin-top: 3px;
+			margin-bottom: 0px;
+		}
+
+		.description {
+			margin: 20px auto auto auto;
+			position: relative;
+			text-align: center;
+		}
+
+		&.standard {
+			text-align: center;
+		}
+	}
+}
+
+::ng-deep .contact-list {
+	overflow-y: auto !important;
+	min-height: 125px;
+}

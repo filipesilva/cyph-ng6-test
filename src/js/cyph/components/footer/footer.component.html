@@ -1,0 +1,91 @@
+<div fxFlex fxLayout='row' fxLayoutAlign='center center' class='footer'>
+	<div fxFlex></div>
+
+	<div
+		fxLayout='row'
+		fxLayoutGap='32px'
+		*ngIf='!envService.coBranded && !envService.isTelehealth'
+	>
+		<div fxFlex='nogrow'>
+			<a [href]='envService.homeUrl'>
+				<span>&copy; Cyph 2018</span>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span class='pre-spaced'>{{stringsService.patents}}</span>
+			</a>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</div>
+
+		<div fxFlex='nogrow'>
+			<a [href]='envService.homeUrl + "contact"' cyphTranslate>
+				Contact
+			</a>
+		</div>
+
+		<div fxFlex='nogrow'>
+			<strong>-</strong>
+			&ngsp;
+			<strong *ngIf='sessionService.state.wasInitiatedByAPI; else proMessage'>
+				{{stringsService.footerMessageAPI}}
+			</strong>
+			<ng-template #proMessage>
+				<strong *ngIf='envService.environment.customBuild?.config.pro; else defaultMessage'>
+					{{stringsService.footerMessagePro}}
+				</strong>
+			</ng-template>
+			<ng-template #defaultMessage>
+				<strong>
+					{{stringsService.footerMessageDefault}}
+				</strong>
+			</ng-template>
+			&ngsp;
+			<strong>-</strong>
+		</div>
+
+		<div fxFlex='nogrow'>
+			<a [href]='envService.homeUrl + "pricing"' cyphTranslate>
+				Business Pricing
+			</a>
+		</div>
+
+		<div fxFlex='nogrow'>
+			<a [href]='envService.homeUrl + "donate"' cyphTranslate>
+				Donate
+			</a>
+		</div>
+
+		<div fxFlex='nogrow'>
+			<a [href]='envService.homeUrl + "privacypolicy"' cyphTranslate>
+				Privacy Policy
+			</a>
+		</div>
+
+		<div fxFlex='nogrow'>
+			<a [href]='envService.homeUrl + "termsofservice"' cyphTranslate>
+				Terms of Service
+			</a>
+		</div>
+	</div>
+
+	<div fxLayout='row' *ngIf='
+		(envService.coBranded && !envService.whiteLabel) || envService.isTelehealth
+	'>
+		<div class='powered-by-cyph'>
+			<a [href]='envService.homeUrl' class='small-font'>
+				<span *ngIf='envService.isTelehealth' cyphTranslate>
+					Telehealth Session
+				</span>
+				&ngsp;
+				<span cyphTranslate>
+					Powered by Cyph
+				</span>
+			</a>
+		</div>
+	</div>
+
+	<div fxFlex fxLayout='row' fxLayoutAlign='end center'>
+		<div cyphTranslate *ngIf='envService.isTelehealth'>
+			<img src='/assets/img/websign.icon.png' alt='WebSign Validated' />
+			<img src='/assets/img/hipaa.icon.png' alt='HIPAA-Compliant' />
+		</div>
+	</div>
+</div>

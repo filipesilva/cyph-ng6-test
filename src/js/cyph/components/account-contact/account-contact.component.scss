@@ -1,0 +1,83 @@
+@import '../../../../css/mixins';
+
+.contact {
+	overflow: hidden;
+	margin-left: auto;
+	margin-right: auto;
+
+	@include transition(filter 0s ease);
+
+	button {
+		@include transition(transform 0s ease);
+	}
+
+	&.non-clickable {
+		&, .router-link {
+			cursor: initial !important;
+		}
+	}
+
+	&.telehealth {
+		.avatar {
+			width: 4.5em;
+			height: 4.5em;
+			margin: -1em 0px;
+		}
+
+		mat-card-title {
+			font-size: 20px;
+			margin: 0px 0px 7px 0px;
+		}
+
+		mat-card-subtitle {
+			font-size: 14px;
+			top: -10px;
+			position: relative;
+			margin: 0px;
+
+			mat-icon {
+				font-size: 21px;
+				top: 3.5px;
+				margin-right: -4px;
+				position: relative;
+			}
+		}
+
+		cyph-account-user-rating {
+			margin-left: auto;
+			margin-bottom: 13px;
+			text-align: center;
+		}
+	}
+}
+
+.avatar {
+	&.Online {
+		@include animation-name(pulse);
+	}
+
+	&.Away {
+		@include animation-name(bounce);
+	}
+
+	&.Busy {
+		@include animation-name(pulse);
+	}
+
+	&.Offline {
+		@include animation-name(bounce);
+	}
+}
+
+.pending {
+	button {
+		width: 50px;
+		height: 50px;
+	}
+
+	mat-card-title {
+		font-size: 1.2em;
+		margin-top: 15px;
+		margin-bottom: 23px;
+	}
+}

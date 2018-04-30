@@ -1,0 +1,39 @@
+{
+	"angularCompilerOptions": {
+		"fullTemplateTypeCheck": true,
+		"preserveWhitespaces": false
+	},
+	"compileOnSave": true,
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+		"lib": ["dom", "dom.iterable", "es2016", "scripthost"],
+		"module": "es2015",
+		"moduleResolution": "node",
+		"newLine": "LF",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		/* Pending Angular AOT fix: "noUnusedParameters": true, */
+		"paths": {
+			"_stream_duplex": ["js/externals/_stream_duplex"],
+			"_stream_writable": ["js/externals/_stream_writable"],
+			"faye-websocket": ["js/externals/faye-websocket"],
+			"fs": ["js/externals/fs"],
+			"lodash/*": ["node_modules/@types/lodash-es/*"],
+			"libsodium": ["js/externals/libsodium"],
+			"request": ["js/externals/request"],
+			"rsvp": ["js/externals/rsvp"],
+			"stream": ["js/externals/stream"]
+		},
+		"skipLibCheck": true,
+		"sourceMap": false,
+		"strict": true,
+		"target": "es5"
+	},
+	"include": [
+		"**/*.ts"
+	]
+}

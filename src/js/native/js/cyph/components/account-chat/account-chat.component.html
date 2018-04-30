@@ -1,0 +1,52 @@
+<div fxFlexFill fxLayoutAlign='center center' class='cyph-foreground'>
+	<div
+		[fxFlex]='envService.isMobile ? 100 : 95'
+		fxFlexFill
+		fxLayout='column'
+		*ngIf='accountSessionService.opened | async'
+	>
+		<cyph-account-call-waiting
+			fxFlexFill
+			[appointment]='appointment | async'
+			*ngIf='initialCallPending'
+		></cyph-account-call-waiting>
+
+		<ng-container
+			*ngIf='(messageType | async) === chatMessageValueTypes.Text; else fullMessageBox'
+		>
+			<cyph-chat-main
+				fxFlex
+				[accounts]='true'
+				[messageType]='messageType | async'
+				[class.visibility-hidden]='initialCallPending'
+			></cyph-chat-main>
+
+			<cyph-account-chat-message-box
+				[class.padding]='!envService.isMobile'
+				[messageType]='chatMessageValueTypes.Text'
+				*ngIf='!p2pService.isActiveOrInitialCall'
+				[class.visibility-hidden]='initialCallPending'
+			></cyph-account-chat-message-box>
+		</ng-container>
+
+		<ng-template #fullMessageBox>
+			<cyph-chat-main
+				fxFlex
+				class='chat-end-margin'
+				[accounts]='true'
+				[messageType]='messageType | async'
+				[persistentEndMessage]='true'
+				[promptFollowup]='promptFollowup | async'
+				[uiStyle]='uiStyles.email'
+				[class.visibility-hidden]='initialCallPending'
+			>
+				<cyph-account-chat-message-box
+					[messageType]='messageType | async'
+					[recipient]='accountSessionService.remoteUser'
+					[showHeader]='true'
+					*ngIf='!p2pService.isActiveOrInitialCall'
+				></cyph-account-chat-message-box>
+			</cyph-chat-main>
+		</ng-template>
+	</div>
+</div>

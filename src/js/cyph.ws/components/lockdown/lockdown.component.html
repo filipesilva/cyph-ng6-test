@@ -1,0 +1,52 @@
+<section fxFlexFill fxLayout='column' id='main' *ngIf='ready'>
+	<div
+		fxFlexFill
+		fxLayoutAlign='center center'
+		class='login-form'
+		[class.checking]='checking'
+	>
+		<mat-card fxFlex='95' fxFlex.gt-sm='75' fxFlex.gt-md='50' fxFlex.xs='100'>
+			<cyph-logo cardHeader></cyph-logo>
+			<mat-card-title>
+				{{stringsService.unlockTitle}}
+			</mat-card-title>
+			<mat-card-subtitle>
+				<span cyphTranslate>Welcome to</span>
+				&ngsp;
+				<span>{{stringsService.product}}!</span>
+				&ngsp;
+				<span cyphTranslate>
+					You must enter a password to access this environment.
+				</span>
+			</mat-card-subtitle>
+			<mat-card-content>
+				<form ngNativeValidate (submit)='submit()'>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
+							{{stringsService.invalidPassword}}
+						</h3>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<mat-form-field fxFlex='60'>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]='password'
+								name='password'
+								type='password'
+								placeholder='Password'
+								required
+							/>
+						</mat-form-field>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<button mat-button type='submit' cyphTranslate>
+							Log In
+						</button>
+					</div>
+				</form>
+			</mat-card-content>
+			<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+		</mat-card>
+	</div>
+</section>
