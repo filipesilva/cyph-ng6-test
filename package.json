@@ -143,7 +143,7 @@
 		"highlight.js": "^9.12.0",
 		"html-loader": "^0.5.5",
 		"html-minifier": "^3.5.15",
-		"html-to-text": "^4.0.0",
+		"html-to-text": "https://github.com/buu700/html-to-text-tmp",
 		"htmlencode": "^0.0.4",
 		"htmllint": "^0.7.2",
 		"image-type": "^3.0.0",
