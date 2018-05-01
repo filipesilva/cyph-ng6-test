@@ -25,7 +25,7 @@ export class ChatCyphertextComponent implements OnInit {
 		}
 
 		/* Close cyphertext on esc */
-		$(window).on('keyup', e => {
+		$(window).on('keyup', (e: any) => {
 			if (e.keyCode === 27) {
 				this.cyphertextService.hide();
 			}

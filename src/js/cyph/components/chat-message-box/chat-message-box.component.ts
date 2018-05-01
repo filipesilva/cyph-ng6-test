@@ -129,7 +129,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 		const $textarea	= await this.$textarea;
 
-		$textarea.on('keypress', e => {
+		$textarea.on('keypress', (e: any) => {
 			if (
 				(this.envService.isMobile && this.virtualKeyboardWatcherService.isOpen) ||
 				e.keyCode !== 13 ||
